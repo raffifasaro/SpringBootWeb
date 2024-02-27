@@ -12,6 +12,8 @@ export default function Calendar() {
     //input var
     const [inputValue, setInputValue] = useState('');
 
+    const [timeValue, setTimeValue] = useState('');
+
     const handleDateClick = (arg) => {
         setClicked(arg.dateStr);
 
@@ -26,16 +28,23 @@ export default function Calendar() {
         setClicked(clicked);
     };
 
+    const handlePromptTimeSubmit = (value) => {
+        setTimeValue(value)
+    };
+
     return (
         <div>
-            {clicked !== null && (
-                <Prompt defaultValue={clicked} onSubmit={handlePromptSubmit} onClose={handleClosePrompt} date={clicked} inputValue={inputValue} />  // Pass inputValue as prop
-            )}
             <div>
-                {clicked} {inputValue}
+                {clicked} {inputValue} {timeValue}
             </div>
+
+            {clicked !== null && (
+                <Prompt defaultValue={clicked} onSubmit={handlePromptSubmit} onTimeSubmit={handlePromptTimeSubmit} onClose={handleClosePrompt} date={clicked}
+                        inputValue={inputValue} timeValue={timeValue}/>  // Pass inputValue as prop
+            )}
+
             <FullCalendar
-                plugins={[ dayGridPlugin, interactionPlugin ]}
+                plugins={[dayGridPlugin, interactionPlugin]}
                 dateClick={handleDateClick}
             />
             <p>
