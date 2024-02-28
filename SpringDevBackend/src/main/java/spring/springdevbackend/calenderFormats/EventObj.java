@@ -3,18 +3,18 @@ package spring.springdevbackend.calenderFormats;
 import java.util.Date;
 
 public class EventObj {
-    private final Date date;
+    private final String date;
     private final String time;
 
     private final String Text;
 
-    public EventObj(Date date, String time, String text) {
+    public EventObj(String date, String time, String text) {
         this.date = date;
         this.time = time;
         Text = text;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 

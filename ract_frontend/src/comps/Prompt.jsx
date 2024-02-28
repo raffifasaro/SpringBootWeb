@@ -13,7 +13,8 @@ function Prompt({ onSubmit, onTimeSubmit, date, inputValue, timeValue }) { // Re
 
     const handleSubmit = () => {
         onSubmit(internalInputValue); // Pass internalInputValue
-        fetch('http://localhost:8080/endpoint?amogus=' + internalInputValue)
+        fetch('http://localhost:8080/endpoint?dateValue=' + date + '&timeValue=' + internalTimeValue + '&text='
+            + internalInputValue)
             .then(data => console.log(data))
             .catch(error => console.error('Error:', error));
     };
