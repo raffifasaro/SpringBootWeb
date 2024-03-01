@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 public class Controller {
+
     @GetMapping("/endpoint")
     public EventObj getData(@RequestParam String dateValue, @RequestParam String timeValue, @RequestParam String text) {
         EventObj CalendarFile = new EventObj(dateValue, timeValue, text);
@@ -21,4 +22,5 @@ public class Controller {
     public String test(@RequestParam String text) {
         return text;
     }
+
 }

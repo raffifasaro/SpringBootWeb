@@ -34,3 +34,5 @@ build/
 
 
 /src/main/java/spring/springdevbackend/discordBot/token.txt
+/src/main/java/spring/springdevbackend/discordBot/user.txt
+
