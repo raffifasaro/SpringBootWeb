@@ -6,8 +6,10 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-
+import org.springframework.stereotype.Component;
 
 
 import java.io.IOException;
@@ -18,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-@Configuration
+@Component
 public class BotDiscord {
 
     private static final String TOKEN_FILE_PATH = "src/main/java/spring/springdevbackend/discordBot/token.txt";
@@ -41,7 +43,9 @@ public class BotDiscord {
     }
 
     @Scheduled(fixedRate = 120000)
+    @Async
     public void eventListener() throws ParseException, IOException {
+        System.out.println("Hallo");
         userID = Files.readString(Paths.get(USER_ID_PATH));
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
         if (date.before(Calendar.getInstance().getTime())) {

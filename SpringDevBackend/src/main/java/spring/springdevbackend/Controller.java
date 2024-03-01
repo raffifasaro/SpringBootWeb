@@ -12,6 +12,7 @@ import java.util.List;
 public class Controller {
 
     @GetMapping("/endpoint")
+    //todo request body
     public EventObj getData(@RequestParam String dateValue, @RequestParam String timeValue, @RequestParam String text) {
         EventObj CalendarFile = new EventObj(dateValue, timeValue, text);
         System.out.println(CalendarFile);
