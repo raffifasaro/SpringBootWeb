@@ -1,7 +1,7 @@
 # SpringBootWeb
 Simple SpringBoot project implementing a notification Discord Bot using Discord4J with a java spring boot backend and a React frontend.
 
-
+```
                      _      _                                                 
                     | |    (_)                                                
  __      _____  _ __| | __  _ _ __    _ __  _ __ ___   __ _ _ __ ___  ___ ___ 
@@ -10,4 +10,4 @@ Simple SpringBoot project implementing a notification Discord Bot using Discord4
    \_/\_/ \___/|_|  |_|\_\ |_|_| |_| | .__/|_|  \___/ \__, |_|  \___||___/___/
                                      | |               __/ |                  
                                      |_|              |___/                   
-
+```
