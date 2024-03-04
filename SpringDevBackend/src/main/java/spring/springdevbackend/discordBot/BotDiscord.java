@@ -5,9 +5,7 @@ package spring.springdevbackend.discordBot;
 import discord4j.common.util.Snowflake;
 import discord4j.core.*;
 import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -26,11 +24,30 @@ public class BotDiscord {
     private static final String TOKEN_FILE_PATH = "src/main/java/spring/springdevbackend/discordBot/token.txt";
     private static final String USER_ID_PATH = "src/main/java/spring/springdevbackend/discordBot/user.txt";
 
-    private static String userID = "";
-
-    private final String dateString = "2024-02-04";
     private DiscordClient client = null;
+    private static String userID = null;
 
+    //Test values
+    private final String dateStringTest = "2024-02-04";
+
+    private String botSendMessage(DiscordClient client, String userID) {
+        if (client != null) {
+            client.withGateway(gateway -> gateway.getUserById(Snowflake.of(userID)).flatMap(user -> user.getPrivateChannel()
+                    .flatMap(privateChannel -> privateChannel.createMessage("EVENT!"))
+                    .then())).block();
+            return "Message sent";
+        }
+        return "Sending failed";
+    }
+
+    private String getUserID(String idPath) {
+        try {
+            userID = Files.readString(Paths.get(idPath));
+            return "userID read";
+        } catch (IOException e) {
+            return "Missing user.txt";
+        }
+    }
 
     @PostConstruct
     public String buildBot() {
@@ -45,13 +62,12 @@ public class BotDiscord {
     @Scheduled(fixedRate = 120000)
     @Async
     public void eventListener() throws ParseException, IOException {
-        System.out.println("Hallo");
-        userID = Files.readString(Paths.get(USER_ID_PATH));
-        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateStringTest);
         if (date.before(Calendar.getInstance().getTime())) {
-            client.withGateway(gateway -> gateway.getUserById(Snowflake.of(userID)).flatMap(user -> user.getPrivateChannel()
-                    .flatMap(privateChannel -> privateChannel.createMessage("EVENT!"))
-                    .then())).block();
+            getUserID(USER_ID_PATH);
+            if (userID != null) {
+                botSendMessage(client, userID);
+            }
         }
     }
 }
