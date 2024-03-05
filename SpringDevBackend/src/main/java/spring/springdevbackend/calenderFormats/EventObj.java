@@ -6,12 +6,12 @@ public class EventObj {
     private final String date;
     private final String time;
 
-    private final String Text;
+    private final String text;
 
     public EventObj(String date, String time, String text) {
         this.date = date;
         this.time = time;
-        Text = text;
+        this.text = text;
     }
 
     public String getDate() {
@@ -23,7 +23,7 @@ public class EventObj {
     }
 
     public String getText() {
-        return Text;
+        return text;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class EventObj {
         return "EventObj{" +
                 "date=" + date +
                 ", time='" + time + '\'' +
-                ", Text='" + Text + '\'' +
+                ", Text='" + text + '\'' +
                 '}';
     }
 }
