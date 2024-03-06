@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import spring.springdevbackend.eventModel.EventObj;
 
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,10 +32,10 @@ public class BotDiscord {
     //Test values
     private final String dateStringTest = "2024-02-04";
 
-    private String botSendMessage(DiscordClient client, String userID) {
+    private String botSendMessage(DiscordClient client, String userID, String text) {
         if (client != null) {
             client.withGateway(gateway -> gateway.getUserById(Snowflake.of(userID)).flatMap(user -> user.getPrivateChannel()
-                    .flatMap(privateChannel -> privateChannel.createMessage("EVENT!"))
+                    .flatMap(privateChannel -> privateChannel.createMessage(text))
                     .then())).block();
             return "Message sent";
         }
@@ -61,12 +63,21 @@ public class BotDiscord {
 
     @Scheduled(fixedRate = 120000)
     @Async
-    public void eventListener() throws ParseException, IOException {
+    public void eventListener() throws ParseException {
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateStringTest);
-        if (date.before(Calendar.getInstance().getTime())) {
-            getUserID(USER_ID_PATH);
-            if (userID != null) {
-                botSendMessage(client, userID);
+        LocalTime time = LocalTime.of(11, 45);
+
+        //test event obj
+        EventObj event = new EventObj(date, time, "HalloTextFromEventObj");
+
+        //Check Date
+        if (event.date().before(Calendar.getInstance().getTime())) {
+            //Check Time
+            if (event.time().isBefore(LocalTime.now())) {
+                getUserID(USER_ID_PATH);
+                if (userID != null) {
+                    botSendMessage(client, userID, event.text());
+                }
             }
         }
     }
