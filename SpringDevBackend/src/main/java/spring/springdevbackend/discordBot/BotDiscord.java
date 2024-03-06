@@ -8,7 +8,8 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import spring.springdevbackend.eventModel.EventObj;
+import spring.springdevbackend.eventModel.Event;
+
 
 
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class BotDiscord {
         LocalTime time = LocalTime.of(11, 45);
 
         //test event obj
-        EventObj event = new EventObj(date, time, "HalloTextFromEventObj");
+        Event event = new Event(null, date, time, "HalloTextFromEventObj");
 
         //Check Date
         if (event.date().before(Calendar.getInstance().getTime())) {

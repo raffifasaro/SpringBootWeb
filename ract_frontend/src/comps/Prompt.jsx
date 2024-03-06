@@ -13,10 +13,22 @@ function Prompt({ onSubmit, onTimeSubmit, date, inputValue, timeValue }) { // Re
 
     const handleSubmit = () => {
         onSubmit(internalInputValue); // Pass internalInputValue
-        fetch('http://localhost:8080/endpoint?dateValue=' + date + '&timeValue=' + internalTimeValue + '&text='
-            + internalInputValue)
-            .then(data => console.log(data))
-            .catch(error => console.error('Error:', error));
+
+        const eventObj = {
+            date: date,
+            time: internalTimeValue,
+            text: internalInputValue
+        };
+
+        fetch('http://localhost:8080/endpoint2?dateValue=' + date + '&timeValue=' + internalTimeValue + '&text='
+                     + internalInputValue)
+                     .then(data => console.log(data))
+                     .catch(error => console.error('Error:', error));
+
+        //fetch('http://localhost:8080/endpoint?dateValue=' + date + '&timeValue=' + internalTimeValue + '&text='
+        //             + internalInputValue)
+        //             .then(data => console.log(data))
+        //             .catch(error => console.error('Error:', error));
     };
 
     const handleTimeSubmit = () => {
