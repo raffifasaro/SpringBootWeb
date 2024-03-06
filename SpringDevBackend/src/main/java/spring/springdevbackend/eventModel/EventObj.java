@@ -1,9 +1,11 @@
 package spring.springdevbackend.eventModel;
 
+import jakarta.persistence.Id;
+
 import java.time.LocalTime;
 import java.util.Date;
 
-public record EventObj(Date date, LocalTime time, String text) {
+public record EventObj(@Id Date date, LocalTime time, String text) {
 
     @Override
     public String toString() {
