@@ -10,6 +10,7 @@ import spring.springdevbackend.repository.EventRepository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -35,7 +36,8 @@ public class ApplicationController {
     //public record Event(@Id @JsonIgnore Integer id, Date date, LocalTime time, String text) {
     @GetMapping("/endpoint2")
     public void getData(@RequestParam String dateValue, @RequestParam String timeValue, @RequestParam String text) throws ParseException {
-        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateValue);
+        //Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateValue);
+        LocalDate date = LocalDate.parse(dateValue);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime time = LocalTime.parse(timeValue, formatter);
         Event event = new Event(date, time, text);

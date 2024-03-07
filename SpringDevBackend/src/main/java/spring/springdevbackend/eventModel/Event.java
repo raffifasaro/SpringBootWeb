@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 
@@ -17,11 +18,11 @@ public class Event {
     @JsonIgnore
     private Integer id;
 
-    private Date date;
+    private LocalDate date;
     private LocalTime time;
     private String text;
 
-    public Event(Date date, LocalTime time, String text) {
+    public Event(LocalDate date, LocalTime time, String text) {
         this.date = date;
         this.time = time;
         this.text = text;
@@ -31,11 +32,11 @@ public class Event {
 
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

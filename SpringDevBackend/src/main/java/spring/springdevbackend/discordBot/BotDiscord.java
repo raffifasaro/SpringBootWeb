@@ -5,11 +5,12 @@ package spring.springdevbackend.discordBot;
 import discord4j.common.util.Snowflake;
 import discord4j.core.*;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import spring.springdevbackend.eventModel.Event;
-
+import spring.springdevbackend.repository.EventRepository;
 
 
 import java.io.IOException;
@@ -17,12 +18,23 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class BotDiscord {
+
+    private final EventRepository repository;
+    @Autowired
+    public BotDiscord(EventRepository repository) {
+        this.repository = repository;
+    }
 
     private static final String TOKEN_FILE_PATH = "src/main/java/spring/springdevbackend/discordBot/token.txt";
     private static final String USER_ID_PATH = "src/main/java/spring/springdevbackend/discordBot/user.txt";
@@ -52,6 +64,27 @@ public class BotDiscord {
         }
     }
 
+    private Iterable<Event> getAllFromDB() {
+        return repository.findAll();
+        //todo implement
+    }
+
+    private String cleanDB() {
+        Iterable<Event> events = repository.findAll();
+
+        for (Event event : events) {
+            String deleted = "";
+            //Check if events are old and delete them
+            if (LocalDateTime.of(event.getDate(), event.getTime()).isBefore(LocalDateTime.now())) {
+                repository.delete(event);
+                deleted = deleted + event + ", ";
+            }
+            return deleted;
+        }
+
+        return "";
+    }
+
     @PostConstruct
     public String buildBot() {
         try {
@@ -65,14 +98,17 @@ public class BotDiscord {
     @Scheduled(fixedRate = 120000)
     @Async
     public void eventListener() throws ParseException {
-        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateStringTest);
+        //Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateStringTest);
+        LocalDate date = LocalDate.parse(dateStringTest);
         LocalTime time = LocalTime.of(11, 45);
 
         //test event obj
         Event event = new Event(date, time, "HalloTextFromEventObj");
 
         //Check Date
-        if (event.getDate().before(Calendar.getInstance().getTime())) {
+
+        //event.getDate().before(Calendar.getInstance().getTime())
+        if (event.getDate().isBefore(LocalDate.now())) {
             //Check Time
             if (event.getTime().isBefore(LocalTime.now())) {
                 getUserID(USER_ID_PATH);
