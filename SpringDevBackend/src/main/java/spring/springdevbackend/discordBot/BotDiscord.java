@@ -69,15 +69,15 @@ public class BotDiscord {
         LocalTime time = LocalTime.of(11, 45);
 
         //test event obj
-        Event event = new Event(null, date, time, "HalloTextFromEventObj");
+        Event event = new Event(date, time, "HalloTextFromEventObj");
 
         //Check Date
-        if (event.date().before(Calendar.getInstance().getTime())) {
+        if (event.getDate().before(Calendar.getInstance().getTime())) {
             //Check Time
-            if (event.time().isBefore(LocalTime.now())) {
+            if (event.getTime().isBefore(LocalTime.now())) {
                 getUserID(USER_ID_PATH);
                 if (userID != null) {
-                    botSendMessage(client, userID, event.text());
+                    botSendMessage(client, userID, event.getText());
                 }
             }
         }

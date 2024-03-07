@@ -29,7 +29,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/endpoint")
-    public Event getData(@RequestBody Event eventObj) {
+    public Event getData(@RequestBody() Event eventObj) {
         System.out.println(eventObj);
         //save given event to database
         repository.save(eventObj);
@@ -42,7 +42,7 @@ public class ApplicationController {
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateValue);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime time = LocalTime.parse(timeValue, formatter);
-        Event event = new Event(null, date, time, text);
+        Event event = new Event(date, time, text);
         System.out.println(event);
         repository.save(event);
     }
