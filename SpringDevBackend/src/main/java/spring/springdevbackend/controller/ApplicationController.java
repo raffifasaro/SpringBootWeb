@@ -1,4 +1,4 @@
-package spring.springdevbackend.Controller;
+package spring.springdevbackend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,12 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import spring.springdevbackend.eventModel.Event;
 import spring.springdevbackend.repository.EventRepository;
 
-import javax.xml.crypto.Data;
-import java.sql.Time;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
