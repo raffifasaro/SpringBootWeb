@@ -12,20 +12,13 @@ import org.springframework.stereotype.Component;
 import spring.springdevbackend.eventModel.Event;
 import spring.springdevbackend.repository.EventRepository;
 
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @Component
 public class BotDiscord {
@@ -64,15 +57,12 @@ public class BotDiscord {
         }
     }
 
-    private Iterable<Event> getAllFromDB() {
+    private Iterable<Event> checkDB() {
         return repository.findAll();
-        //todo implement
     }
 
     private String cleanDB() {
-        Iterable<Event> events = repository.findAll();
-
-        for (Event event : events) {
+        for (Event event : checkDB()) {
             String deleted = "";
             //Check if events are old and delete them
             if (LocalDateTime.of(event.getDate(), event.getTime()).isBefore(LocalDateTime.now())) {
@@ -81,7 +71,6 @@ public class BotDiscord {
             }
             return deleted;
         }
-
         return "";
     }
 
@@ -99,23 +88,26 @@ public class BotDiscord {
     @Async
     public void eventListener() throws ParseException {
         //Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateStringTest);
-        LocalDate date = LocalDate.parse(dateStringTest);
-        LocalTime time = LocalTime.of(11, 45);
+        //LocalDate date = LocalDate.parse(dateStringTest);
+        //LocalTime time = LocalTime.of(11, 45);
 
         //test event obj
-        Event event = new Event(date, time, "HalloTextFromEventObj");
+        //Event event = new Event(date, time, "HalloTextFromEventObj");
 
-        //Check Date
-
-        //event.getDate().before(Calendar.getInstance().getTime())
-        if (event.getDate().isBefore(LocalDate.now())) {
-            //Check Time
-            if (event.getTime().isBefore(LocalTime.now())) {
-                getUserID(USER_ID_PATH);
-                if (userID != null) {
-                    botSendMessage(client, userID, event.getText());
+        for (Event event : checkDB()) {
+            //Check Date
+            //event.getDate().before(Calendar.getInstance().getTime())
+            if (event.getDate().isBefore(LocalDate.now())) {
+                //Check Time
+                if (event.getTime().isBefore(LocalTime.now())) {
+                    System.out.println(event);
+                    getUserID(USER_ID_PATH);
+                    if (userID != null) {
+                        botSendMessage(client, userID, event.getText());
+                    }
                 }
             }
         }
+        System.out.println(cleanDB());
     }
 }
