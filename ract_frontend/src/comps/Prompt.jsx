@@ -48,7 +48,7 @@ function Prompt({ onSubmit, onTimeSubmit, date, inputValue, timeValue }) { // Re
             <div className="field">
                 <label className="label">Event on {date} at {internalTimeValue}:</label>
                 <div className="control">
-                    <input className="input" type="text" value={internalInputValue} onChange={handleChange}/>
+                    <input className="input" type="text" value={internalInputValue} onChange={handleChange} style={{ height: '200px', paddingBottom: 166}}/>
                 </div>
             </div>
 
