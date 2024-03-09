@@ -33,16 +33,12 @@ public class BotDiscord {
     private static final String USER_ID_PATH = "src/main/java/spring/springdevbackend/discordBot/user.txt";
 
     private DiscordClient client = null;
-    private static String userID = null;
-
-    //Test values
-    private final String dateStringTest = "2024-02-04";
 
     private String botSendMessage(DiscordClient client, String userID, String text) {
         if (client != null) {
             client.withGateway(gateway -> gateway.getUserById(Snowflake.of(userID)).flatMap(user -> user.getPrivateChannel()
                     .flatMap(privateChannel -> privateChannel.createMessage(text))
-                    .then())).block();
+                    .then())).subscribe();
             return "Message sent";
         }
         return "Sending failed";
@@ -50,8 +46,7 @@ public class BotDiscord {
 
     private String getUserID(String idPath) {
         try {
-            userID = Files.readString(Paths.get(idPath));
-            return "userID read";
+            return Files.readString(Paths.get(idPath));
         } catch (IOException e) {
             return "Missing user.txt";
         }
@@ -84,30 +79,21 @@ public class BotDiscord {
         }
     }
 
+    public void botTest() {
+        botSendMessage(client, getUserID(USER_ID_PATH), "Test");
+    }
+
     @Scheduled(fixedRate = 120000)
     @Async
     public void eventListener() throws ParseException {
-        //Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateStringTest);
-        //LocalDate date = LocalDate.parse(dateStringTest);
-        //LocalTime time = LocalTime.of(11, 45);
-
-        //test event obj
-        //Event event = new Event(date, time, "HalloTextFromEventObj");
-
         for (Event event : checkDB()) {
-            //Check Date
-            //event.getDate().before(Calendar.getInstance().getTime())
-            if (event.getDate().isBefore(LocalDate.now())) {
-                //Check Time
-                if (event.getTime().isBefore(LocalTime.now())) {
-                    System.out.println(event);
-                    getUserID(USER_ID_PATH);
-                    if (userID != null) {
-                        botSendMessage(client, userID, event.getText());
-                    }
+            //Check Time
+            if (LocalDateTime.of(event.getDate(), event.getTime()).isBefore(LocalDateTime.now())) {
+                if (getUserID(USER_ID_PATH) != null) {
+                    System.out.println("Bot:" + botSendMessage(client, getUserID(USER_ID_PATH), event.getText()));
+                    System.out.println("Cleaned:" + cleanDB());
                 }
             }
         }
-        System.out.println(cleanDB());
     }
 }
