@@ -7,7 +7,7 @@ SpringBoot project implementing a notification Discord Bot using Discord4J with 
 -specify the time of the day and the message for the event notivication
 ![image](https://github.com/raffifasaro/SpringBootWeb/assets/134242785/0272b97d-c715-4a18-a8f8-22eb59b546f2)
 
--get the event notication at the specified time and date from the discord bot </br>
+-get the event notication at the specified time and date from the discord bot <br>
 ![image](https://github.com/raffifasaro/SpringBootWeb/assets/134242785/096831e5-a29d-4552-92be-4cfb1ed0a9d9)
 
 
