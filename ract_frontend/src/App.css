@@ -4,3 +4,20 @@
   text-align: center;
 }
 
+.time-input {
+  display: flex;
+  width: 10%;
+}
+
+.align {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.divider {
+  content: ":";
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 5px;
+}

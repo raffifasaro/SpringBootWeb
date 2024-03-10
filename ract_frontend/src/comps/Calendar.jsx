@@ -34,10 +34,6 @@ export default function Calendar() {
 
     return (
         <div>
-            <div>
-                {clicked} {inputValue} {timeValue}
-            </div>
-
             {clicked !== null && (
                 <Prompt defaultValue={clicked} onSubmit={handlePromptSubmit} onTimeSubmit={handlePromptTimeSubmit} onClose={handleClosePrompt} date={clicked}
                         inputValue={inputValue} timeValue={timeValue}/>  // Pass inputValue as prop
