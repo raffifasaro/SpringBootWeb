@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
 
 @Entity
@@ -16,7 +15,7 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    private Integer id;
+    private int id;
 
     private LocalDate date;
     private LocalTime time;

@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 @EnableAsync
 public class SpringDevBackendApplication {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         SpringApplication.run(SpringDevBackendApplication.class, args);
     }
 }

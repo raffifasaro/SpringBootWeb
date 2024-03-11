@@ -1,10 +1,11 @@
 package spring.springdevbackend.discordBot;
 
 
-
 import discord4j.common.util.Snowflake;
-import discord4j.core.*;
+import discord4j.core.DiscordClient;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,15 +16,14 @@ import spring.springdevbackend.repository.EventRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.Optional;
 
 @Component
 public class BotDiscord {
 
     private final EventRepository repository;
+
     @Autowired
     public BotDiscord(EventRepository repository) {
         this.repository = repository;
@@ -34,21 +34,25 @@ public class BotDiscord {
 
     private DiscordClient client = null;
 
-    private String botSendMessage(DiscordClient client, String userID, String text) {
+    private static final Logger LOG = LoggerFactory.getLogger(BotDiscord.class);
+
+    private boolean botSendMessage(final DiscordClient client, final String userID, final String text) {
         if (client != null) {
             client.withGateway(gateway -> gateway.getUserById(Snowflake.of(userID)).flatMap(user -> user.getPrivateChannel()
                     .flatMap(privateChannel -> privateChannel.createMessage(text))
                     .then())).subscribe();
-            return "Message sent";
+            return true;
         }
-        return "Sending failed";
+        LOG.warn("DiscordClient was not initialized!");
+        return false;
     }
 
-    private String getUserID(String idPath) {
+    private Optional<String> getUserID(final String idPath) {
         try {
-            return Files.readString(Paths.get(idPath));
-        } catch (IOException e) {
-            return "Missing user.txt";
+            return Optional.of(Files.readString(Paths.get(idPath)));
+        } catch (IOException ignored) {
+            LOG.warn("Missing user.txt");
+            return Optional.empty();
         }
     }
 
@@ -58,41 +62,50 @@ public class BotDiscord {
 
     private String cleanDB() {
         for (Event event : checkDB()) {
-            String deleted = "";
+            final StringBuilder stringBuilder = new StringBuilder();
             //Check if events are old and delete them
             if (LocalDateTime.of(event.getDate(), event.getTime()).isBefore(LocalDateTime.now())) {
                 repository.delete(event);
-                deleted = deleted + event + ", ";
+                stringBuilder.append(event).append(", ");
             }
-            return deleted;
+            return stringBuilder.toString();
         }
         return "";
     }
 
     @PostConstruct
-    public String buildBot() {
+    public boolean buildBot() {
         try {
             client = DiscordClient.create(Files.readString(Paths.get(TOKEN_FILE_PATH)));
-            return "bot built";
-        } catch (IOException e) {
-            return "Missing token.txt File inside discordBot directory";
+            LOG.debug("bot built");
+            return true;
+        } catch (IOException ignored) {
+            LOG.warn("Missing token.txt File inside discordBot directory");
+            return false;
         }
     }
 
     public void botTest() {
-        botSendMessage(client, getUserID(USER_ID_PATH), "Test");
+        // check return value of getUserID!
+        botSendMessage(client, getUserID(USER_ID_PATH).orElseThrow(), "Test");
     }
 
     @Scheduled(fixedRate = 120000)
     @Async
-    public void eventListener() throws ParseException {
+    public void eventListener() {
         for (Event event : checkDB()) {
             //Check Time
             if (LocalDateTime.of(event.getDate(), event.getTime()).isBefore(LocalDateTime.now())) {
-                if (getUserID(USER_ID_PATH) != null) {
-                    System.out.println("Bot:" + botSendMessage(client, getUserID(USER_ID_PATH), event.getText()));
-                    System.out.println("Cleaned:" + cleanDB());
-                }
+                getUserID(USER_ID_PATH).ifPresent(userID -> {
+
+                    // use the logging of the original methods and dont log them out here
+                    if (botSendMessage(client, userID, event.getText())) {
+                        LOG.info("Bot: Message sent");
+                    } else {
+                        LOG.info("Bot: Sending Message failed!");
+                    }
+                    LOG.info("Cleaned:" + cleanDB());
+                });
             }
         }
     }

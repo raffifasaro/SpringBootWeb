@@ -1,5 +1,7 @@
 package spring.springdevbackend.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,45 +10,43 @@ import org.springframework.web.bind.annotation.RestController;
 import spring.springdevbackend.eventModel.Event;
 import spring.springdevbackend.repository.EventRepository;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 @RestController
 public class ApplicationController {
 
     private final EventRepository repository;
 
+    private final static Logger LOG = LoggerFactory.getLogger(ApplicationController.class);
+    private final static DateTimeFormatter HOURS_AND_MINUTES = DateTimeFormatter.ofPattern("HH:mm");
+
     @Autowired
-    public ApplicationController(EventRepository repository) {
+    public ApplicationController(final EventRepository repository) {
         this.repository = repository;
     }
 
     @GetMapping("/endpoint")
-    public Event getData(@RequestBody() Event eventObj) {
-        System.out.println(eventObj);
+    public Event getData(final @RequestBody Event eventObj) {
+
+        LOG.trace(eventObj.toString());
         //save given event to database
-        repository.save(eventObj);
-        return eventObj;
+        return repository.save(eventObj);
     }
 
-    //public record Event(@Id @JsonIgnore Integer id, Date date, LocalTime time, String text) {
     @GetMapping("/endpoint2")
-    public void getData(@RequestParam String dateValue, @RequestParam String timeValue, @RequestParam String text) throws ParseException {
+    public void getData(final @RequestParam String dateValue, final @RequestParam String timeValue, final @RequestParam String text) {
         //Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateValue);
-        LocalDate date = LocalDate.parse(dateValue);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime time = LocalTime.parse(timeValue, formatter);
-        Event event = new Event(date, time, text);
-        System.out.println(event);
+        final LocalDate date = LocalDate.parse(dateValue);
+        final LocalTime time = LocalTime.parse(timeValue, HOURS_AND_MINUTES);
+        final Event event = new Event(date, time, text);
+        LOG.trace(event.toString());
         repository.save(event);
     }
 
     @GetMapping("testEndpoint")
-    public String test(@RequestParam String text) {
+    public String test(final @RequestParam String text) {
         return text;
     }
 
