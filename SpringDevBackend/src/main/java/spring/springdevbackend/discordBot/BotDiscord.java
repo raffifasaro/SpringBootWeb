@@ -109,4 +109,11 @@ public class BotDiscord {
             }
         }
     }
+
+    //@Scheduled(fixedRate = 86400000)
+    public void backupDB() {
+        String filePath = "";
+        Iterable<Event> events = repository.findAll();
+        events.forEach(event -> Event.serialise(event, filePath));
+    }
 }

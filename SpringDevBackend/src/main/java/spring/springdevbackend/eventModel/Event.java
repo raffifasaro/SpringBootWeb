@@ -84,7 +84,7 @@ public class Event {
         }
     }
 
-    public static Optional<Event> deserialise(final String serialisedEvent) {
+    public static Optional<Event> deSerialise(final String serialisedEvent) {
         try {
             return Optional.of(MAPPER.readValue(serialisedEvent, Event.class));
         } catch (JsonProcessingException ex) {
@@ -94,7 +94,6 @@ public class Event {
     }
 
     @Override
-
     public String toString() {
         return "Event{" +
                 "id=" + id +
