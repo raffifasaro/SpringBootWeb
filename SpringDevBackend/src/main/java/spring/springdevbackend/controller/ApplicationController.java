@@ -31,17 +31,15 @@ public class ApplicationController {
     public Event getData(final @RequestBody Event eventObj) {
 
         LOG.trace(eventObj.toString());
-        //save given event to database
         return repository.save(eventObj);
     }
 
     @GetMapping("/endpoint2")
     public void getData(final @RequestParam String dateValue, final @RequestParam String timeValue, final @RequestParam String text) {
-        //Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateValue);
         final LocalDate date = LocalDate.parse(dateValue);
         final LocalTime time = LocalTime.parse(timeValue, HOURS_AND_MINUTES);
         final Event event = new Event(date, time, text);
-        LOG.trace(event.toString());
+        LOG.info(event.toString());
         repository.save(event);
     }
 
