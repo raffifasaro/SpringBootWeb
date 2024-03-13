@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 import spring.springdevbackend.eventModel.Event;
 import spring.springdevbackend.repository.EventRepository;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -31,6 +34,8 @@ public class BotDiscord {
 
     private static final String TOKEN_FILE_PATH = "src/main/java/spring/springdevbackend/discordBot/token.txt";
     private static final String USER_ID_PATH = "src/main/java/spring/springdevbackend/discordBot/user.txt";
+
+    private static final String BACKUP_FILE_PATH = "";
 
     private DiscordClient client = null;
 
@@ -112,8 +117,22 @@ public class BotDiscord {
 
     //@Scheduled(fixedRate = 86400000)
     public void backupDB() {
-        String filePath = "";
         Iterable<Event> events = repository.findAll();
-        events.forEach(event -> Event.serialise(event, filePath));
+        events.forEach(event -> Event.serialise(event, BACKUP_FILE_PATH));
+        LOG.info("Database backup complete");
+    }
+
+    public void getDbFromBackup() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(BACKUP_FILE_PATH));
+            String serializedEvent;
+            while ((serializedEvent = reader.readLine()) != null) {
+                if (!serializedEvent.isEmpty()) {
+                    Event.deSerialise(serializedEvent).ifPresent(repository::save);
+                }
+            }
+        } catch (IOException e) {
+            LOG.warn("Backup file read error");
+        }
     }
 }
