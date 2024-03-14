@@ -36,7 +36,7 @@ function Prompt({ onSubmit, onTimeSubmit, date, inputValue, timeValue }) { // Re
                 <div className="align">
                     <div className="divider">Event on {date} at</div>
                     <div className="time-input">
-                        <input className="input" type="text" placeholder="e.g. 8" value={internalTimeValue1}
+                        <input className="input" type="text" placeholder="e.g. 08" value={internalTimeValue1}
                                onChange={handleTimeChange1}/>
                         <div className="divider">
                             :

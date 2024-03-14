@@ -1,8 +1,10 @@
 package spring.springdevbackend.eventModel;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -23,12 +26,13 @@ import java.util.Optional;
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private int id;
 
     private final static ObjectMapper MAPPER = new ObjectMapper();
 
     private final static Logger LOG = LoggerFactory.getLogger(Event.class);
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private LocalTime time;
     private String text;
@@ -40,9 +44,12 @@ public class Event {
     }
 
     public Event() {
-
+        MAPPER.registerModule(new JavaTimeModule());
     }
 
+    public int getId() {
+        return id;
+    }
     public LocalDate getDate() {
         return date;
     }

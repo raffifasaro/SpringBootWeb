@@ -4,6 +4,7 @@ package spring.springdevbackend.discordBot;
 import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClient;
 import jakarta.annotation.PostConstruct;
+import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class BotDiscord {
     private static final String TOKEN_FILE_PATH = "src/main/java/spring/springdevbackend/discordBot/token.txt";
     private static final String USER_ID_PATH = "src/main/java/spring/springdevbackend/discordBot/user.txt";
 
-    private static final String BACKUP_FILE_PATH = "";
+    private static final String BACKUP_FILE_PATH = "src/main/java/spring/springdevbackend/Backup/backupFile.JSON";
 
     private DiscordClient client = null;
 
@@ -95,7 +96,7 @@ public class BotDiscord {
         botSendMessage(client, getUserID(USER_ID_PATH).orElseThrow(), "Test");
     }
 
-    @Scheduled(fixedRate = 120000)
+    @Scheduled(fixedRate = 60000)
     @Async
     public void eventListener() {
         for (Event event : checkDB()) {
@@ -115,20 +116,27 @@ public class BotDiscord {
         }
     }
 
-    //@Scheduled(fixedRate = 86400000)
+    // 1 day in ms = 86400000
+    @Scheduled(fixedRate = 60000)
     public void backupDB() {
+        //TODO save more than 1 Event
         Iterable<Event> events = repository.findAll();
         events.forEach(event -> Event.serialise(event, BACKUP_FILE_PATH));
         LOG.info("Database backup complete");
     }
 
+    @PostConstruct
     public void getDbFromBackup() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(BACKUP_FILE_PATH));
             String serializedEvent;
             while ((serializedEvent = reader.readLine()) != null) {
                 if (!serializedEvent.isEmpty()) {
-                    Event.deSerialise(serializedEvent).ifPresent(repository::save);
+                    Event.deSerialise(serializedEvent).ifPresent(event -> {
+                        if (!repository.existsById(event.getId())) {
+                            repository.save(event);
+                        }
+                    });
                 }
             }
         } catch (IOException e) {
