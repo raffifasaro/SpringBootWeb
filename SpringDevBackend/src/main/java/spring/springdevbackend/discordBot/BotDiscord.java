@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -119,9 +121,11 @@ public class BotDiscord {
     // 1 day in ms = 86400000
     @Scheduled(fixedRate = 60000)
     public void backupDB() {
-        //TODO save more than 1 Event
         Iterable<Event> events = repository.findAll();
-        events.forEach(event -> Event.serialise(event, BACKUP_FILE_PATH));
+        List<Event> eventList = new ArrayList<>();
+        events.forEach(eventList::add);
+
+        events.forEach(event -> Event.serialise(eventList, BACKUP_FILE_PATH));
         LOG.info("Database backup complete");
     }
 
@@ -129,14 +133,14 @@ public class BotDiscord {
     public void getDbFromBackup() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(BACKUP_FILE_PATH));
-            String serializedEvent;
-            while ((serializedEvent = reader.readLine()) != null) {
-                if (!serializedEvent.isEmpty()) {
-                    Event.deSerialise(serializedEvent).ifPresent(event -> {
+            String serializedEvents;
+            while ((serializedEvents = reader.readLine()) != null) {
+                if (!serializedEvents.isEmpty()) {
+                    Event.deSerialise(serializedEvents).ifPresent(events -> events.forEach(event -> {
                         if (!repository.existsById(event.getId())) {
                             repository.save(event);
                         }
-                    });
+                    }));
                 }
             }
         } catch (IOException e) {

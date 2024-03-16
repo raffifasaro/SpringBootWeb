@@ -18,6 +18,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -74,9 +76,9 @@ public class Event {
         this.text = text;
     }
 
-    public static void serialise(final Event event, final String fileName) {
+    public static void serialise(final List<Event> events, final String fileName) {
         try (final BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            final String serializedEvent = MAPPER.writeValueAsString(event);
+            final String serializedEvent = MAPPER.writeValueAsString(events);
             writer.write(serializedEvent);
 
         } catch (JsonProcessingException ex) {
@@ -91,9 +93,9 @@ public class Event {
         }
     }
 
-    public static Optional<Event> deSerialise(final String serialisedEvent) {
+    public static Optional<List<Event>> deSerialise(final String serialisedEvents) {
         try {
-            return Optional.of(MAPPER.readValue(serialisedEvent, Event.class));
+            return Optional.of(MAPPER.readValue(serialisedEvents, MAPPER.getTypeFactory().constructCollectionType(List.class, Event.class)));
         } catch (JsonProcessingException ex) {
             LOG.warn("Deserialising Event-Object failed due to: {}", ex.getMessage());
             return Optional.empty();
