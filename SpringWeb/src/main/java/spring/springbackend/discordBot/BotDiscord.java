@@ -81,9 +81,14 @@ public class BotDiscord {
 
     @PostConstruct
     public boolean buildBot() {
-        client = DiscordClient.create(TOKEN);
-        LOG.debug("bot built");
-        return true;
+        if (TOKEN.length() > 50) {
+            client = DiscordClient.create(TOKEN);
+            LOG.debug("bot built");
+            return true;
+        } else {
+            LOG.warn("Invalid token");
+            return false;
+        }
     }
 
     public void botTest() {
@@ -94,21 +99,23 @@ public class BotDiscord {
     @Scheduled(fixedRate = 60000)
     @Async
     public void eventListener() {
-        for (Event event : checkDB()) {
-            //Check Time
-            if (LocalDateTime.of(event.getDate(), event.getTime()).isBefore(LocalDateTime.now())) {
-                getUserID().ifPresent(userID -> {
+        if (client != null) {
+            for (Event event : checkDB()) {
+                //Check Time
+                if (LocalDateTime.of(event.getDate(), event.getTime()).isBefore(LocalDateTime.now())) {
+                    getUserID().ifPresent(userID -> {
 
-                    // use the logging of the original methods and dont log them out here
-                    if (botSendMessage(client, userID, event.getText())) {
-                        LOG.info("Bot: Message sent");
-                    } else {
-                        LOG.info("Bot: Sending Message failed!");
-                    }
-                    LOG.info("Cleaned:" + cleanDB());
-                });
+                        // use the logging of the original methods and dont log them out here
+                        if (botSendMessage(client, userID, event.getText())) {
+                            LOG.info("Bot: Message sent");
+                        } else {
+                            LOG.info("Bot: Sending Message failed!");
+                        }
+                        LOG.info("Cleaned:" + cleanDB());
+                    });
+                }
             }
-        }
+        } else LOG.warn("client is null");
     }
 
     // 1 day in ms = 86400000
