@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+/src/main/java/spring/springbackend/discordBot/token.txt
+/src/main/java/spring/springbackend/discordBot/user.txt
+/src/main/java/spring/springbackend/Backup/backupFile.JSON
+

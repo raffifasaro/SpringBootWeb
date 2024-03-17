@@ -4,7 +4,6 @@ package spring.springdevbackend.discordBot;
 import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClient;
 import jakarta.annotation.PostConstruct;
-import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import spring.springdevbackend.eventModel.Event;
 import spring.springdevbackend.repository.EventRepository;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
