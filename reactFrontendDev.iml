@@ -6,6 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/ract_frontend/build" />
     </content>
     <content url="file://$MODULE_DIR$/reactFrontendDev" />
+    <content url="file://$MODULE_DIR$/react_frontend_dev" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
